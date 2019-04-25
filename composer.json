@@ -1,0 +1,16 @@
+{
+    "name": "quarkdev/profiler",
+    "require": {
+        "php": "^7.1",
+        "ext-json": "*",
+        "illuminate/container": "^5.8",
+        "illuminate/routing": "^5.8",
+        "illuminate/events": "^5.8",
+        "symfony/stopwatch": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quark\\Profiler\\": ""
+        }
+    }
+}
