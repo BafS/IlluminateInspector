@@ -1,0 +1,207 @@
+<h1>Request / Response</h1>
+
+<div class="row">
+    <div class="col-12">
+        <p class="lead text-muted">Request from <?= ($this->date)($token) ?></p>
+    </div>
+    <div class="col-8">
+        <span class="text-monospace"><?= $request->method ?> <?= $request->uri ?></span><br>
+        <span class="text-monospace text-muted"><?= $request->controllerAction ?? '' ?></span>
+    </div>
+
+    <div class="col-4 justify-content-end d-flex">
+        <a class="btn btn-outline-primary align-self-end" href="?panel=timeline">
+            <i data-feather="git-commit"></i> timeline
+        </a>
+    </div>
+</div>
+
+<div class="page-content">
+
+    <div class="">
+        <h2>Request</h2>
+        <nav>
+            <div class="nav nav-tabs" role="tablist">
+                <a class="nav-item nav-link active" id="nav-payload-tab" data-toggle="tab" href="#nav-payload" role="tab" aria-controls="nav-home" aria-selected="true">
+                    Payload
+                </a>
+                <a class="nav-item nav-link" id="nav-header-tab" data-toggle="tab" href="#nav-header" role="tab" aria-controls="nav-header" aria-selected="false">
+                    Header
+                </a>
+                <a class="nav-item nav-link" id="nav-session-tab" data-toggle="tab" href="#nav-session" role="tab" aria-controls="nav-session" aria-selected="false">
+                    Session
+                </a>
+                <a class="nav-item nav-link" id="nav-cookies-tab" data-toggle="tab" href="#nav-cookies" role="tab" aria-controls="nav-response" aria-selected="false">
+                    Cookies
+                </a>
+            </div>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-pane show active" id="nav-payload" role="tabpanel" aria-labelledby="nav-payload-tab">
+                <?php $this->dump($request->payload) ?>
+            </div>
+            <div class="tab-pane" id="nav-header" role="tabpanel" aria-labelledby="nav-header-tab">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($request->headers as $name => [$value]): ?>
+                        <tr>
+                            <td class="text-monospace<?= strlen($name) > 20 ? ' text-small' : '' ?>"><?= $name ?></td>
+                            <td class="text-monospace text-muted"><?php $this->dump($value, true) ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane" id="nav-session" role="tabpanel" aria-labelledby="nav-session-tab">
+
+            </div>
+            <div class="tab-pane" id="nav-cookies" role="tabpanel" aria-labelledby="nav-cookies-tab">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($request->cookies ?? [] as $name => $value): ?>
+                    <tr>
+                        <td class="text-monospace<?= strlen($name) > 20 ? ' text-small' : '' ?>"><?= $name ?></td>
+                        <td class="text-monospace text-muted"><?php $this->dump($value, true) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <h3>Parameters</h3>
+        <nav>
+            <div class="nav nav-tabs" role="tablist">
+                <a class="nav-item nav-link active" id="nav-request-tab" data-toggle="tab" href="#nav-request" role="tab" aria-controls="nav-request" aria-selected="true">Request</a>
+                <a class="nav-item nav-link" id="nav-query-tab" data-toggle="tab" href="#nav-query" role="tab" aria-controls="nav-query" aria-selected="false">Query</a>
+                <a class="nav-item nav-link" id="nav-attributes-tab" data-toggle="tab" href="#nav-attributes" role="tab" aria-controls="nav-attributes" aria-selected="false">Attributes</a>
+                <a class="nav-item nav-link" id="nav-server-tab" data-toggle="tab" href="#nav-server" role="tab" aria-controls="nav-server" aria-selected="false">Server</a>
+            </div>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-pane show active" id="nav-request" role="tabpanel" aria-labelledby="nav-request-tab">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($request->request ?? [] as $name => $value): ?>
+                    <tr>
+                        <td class="text-monospace<?= strlen($name) > 20 ? ' text-small' : '' ?>"><?= $name ?></td>
+                        <td class="text-monospace text-muted"><?php $this->dump($value, true) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane" id="nav-query" role="tabpanel" aria-labelledby="nav-query-tab">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($request->query ?? [] as $name => $value): ?>
+                    <tr>
+                        <td class="text-monospace<?= strlen($name) > 20 ? ' text-small' : '' ?>"><?= $name ?></td>
+                        <td class="text-monospace text-muted"><?php $this->dump($value, true) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane" id="nav-attributes" role="tabpanel" aria-labelledby="nav-attributes-tab">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($request->attributes ?? [] as $name => $value): ?>
+                    <tr>
+                        <td class="text-monospace<?= strlen($name) > 20 ? ' text-small' : '' ?>"><?= $name ?></td>
+                        <td class="text-monospace text-muted"><?php $this->dump($value, true) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane" id="nav-server" role="tabpanel" aria-labelledby="nav-server-tab">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($request->server ?? [] as $name => $value): ?>
+                    <tr>
+                        <td class="text-monospace<?= strlen($name) > 20 ? ' text-small' : '' ?>"><?= $name ?></td>
+                        <td class="text-monospace text-muted"><?php $this->dump($value, true) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <?php if (isset($response)): ?>
+    <div class="response">
+        <h2>Response <span class="badge badge-light" data-response-status="<?= $response->status ?>"><?= $response->status ?></span></h2>
+        <nav>
+            <div class="nav nav-tabs" role="tablist">
+                <a class="nav-item nav-link active" id="nav-respayload-tab" data-toggle="tab" href="#nav-respayload" role="tab" aria-controls="nav-home" aria-selected="true">
+                    Payload
+                </a>
+                <a class="nav-item nav-link" id="nav-resheaders-tab" data-toggle="tab" href="#nav-resheaders" role="tab" aria-controls="nav-header" aria-selected="false">
+                    Header
+                </a>
+            </div>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-pane show active" id="nav-respayload" role="tabpanel" aria-labelledby="nav-respayload-tab">
+                <?php $this->dump($response->payload) ?>
+            </div>
+            <div class="tab-pane" id="nav-resheaders" role="tabpanel" aria-labelledby="nav-resheader-tab">
+                <table class="table table-sm">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php foreach($response->headers as $name => [$value]): ?>
+                    <tr>
+                        <td class="text-monospace"><?= $name ?></td>
+                        <td class="text-monospace text-muted"><?php $this->dump($value, true) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
+</div>

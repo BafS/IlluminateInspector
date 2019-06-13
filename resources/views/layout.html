@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Profiler</title>
+    <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+<style>
+<?= str_replace(["\n", "  ", ' {'], ['', '', '{'], file_get_contents(__DIR__ . '/../styles.css')) ?>
+</style>
+</head>
+<body class="w-full max-w-screen-xl mx-auto">
+    <div class="container-fluid">
+        <div class="row flex-xl-nowrap">
+            <div id="sidebar" class="d-none d-md-block col-md-2 bd-sidebar p-0">
+                <div class="px-3 py-2">
+                    <h1>Profiler</h1>
+
+                    <a class="badge badge-light" href="<?= $this->uri ?>/<?= $this->lastToken() ?>">
+                        <i data-feather="clock"></i> last activity <?= $this->delta($this->lastToken()) ?>
+                    </a>
+                </div>
+
+                <nav class="nav flex-column">
+                    <a class="nav-link" href="<?= $this->uri ?>"><i data-feather="activity"></i> Activities</a>
+                    <?php if (isset($token)): echo $this->render('nav.activity', $data); endif; ?>
+                    <a class="nav-link" href="<?= $this->uri ?>/env"><i data-feather="hard-drive"></i> Environment</a>
+                    <!--<a class="nav-link active" href="#">Active</a>-->
+                </nav>
+            </div>
+
+            <main id="content-wrapper" class="col-12 col-md-10 py-md-3 px-md-5 ml-md-auto bd-content">
+                <div id="content" class="pt-3">
+                    <div id="page" class="flex">
+                        <?= $this->render('pages/' . $page, $data) ?>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="//cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" crossorigin="anonymous"></script>
+    <script>feather.replace()</script>
+    <script
+            src="//code.jquery.com/jquery-3.4.0.slim.min.js"
+            integrity="sha256-ZaXnYkHGqIhqTbJ6MB4l9Frs/r7U4jlx7ir8PJYBqbI="
+            crossorigin="anonymous"></script>
+    <script src="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.table-data').DataTable({
+                lengthChange: false,
+                order: [],
+                // drawCallback: function(settings) {
+                    // var $paging = $(api.table().container()).find('div.dataTables_paginate')
+                    // console.log(settings, settings.aoData.length);
+                // }
+            });
+        });
+    </script>
+</body>
+</html>

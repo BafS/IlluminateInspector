@@ -1,0 +1,22 @@
+<div class="activity-subnav">
+    <a class="nav-link" href="<?= $this->uri ?>/<?= $token ?>">
+        <i data-feather="zap"></i> Activity
+        <br>
+        <div class="text-muted">
+            <small><?= $this->date($token) ?></small><br>
+            <small><?= $this->since($token) ?></small><br>
+            <small class="text-monospace"><?= $request->method ?> <?= $request->uri ?></small>
+        </div>
+    </a>
+    <div class="ml-3">
+        <a class="nav-link<?= $this->isPanel('request', ' active') ?>" href="<?= $this->uri ?>/<?= $token ?>?panel=request">
+            <i data-feather="shuffle"></i> Request
+        </a>
+        <a class="nav-link<?= $this->isPanel(['events', 'event'], ' active') ?>" href="<?= $this->uri ?>/<?= $token ?>?panel=events">
+            <i data-feather="radio"></i> Events <small class="text-muted">(<?= count($events) ?>)</small>
+        </a>
+        <a class="nav-link<?= $this->isPanel('timeline', ' active')  ?>" href="<?= $this->uri ?>/<?= $token ?>?panel=timeline">
+            <i data-feather="git-commit"></i> Timeline
+        </a>
+    </div>
+</div>

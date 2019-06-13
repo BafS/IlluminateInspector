@@ -1,0 +1,10 @@
+<h1>Event</h1>
+<p class="lead text-muted pb-1">Event (<?= $this->date($event->timestamp) ?>)</p>
+
+<div class="page-content">
+    <h3>Name</h3>
+    <p class="text-monospace"><?= $event->name ?></p>
+
+    <h3>Payload</h3>
+    <?php $this->dump($event->payload) ?>
+</div>

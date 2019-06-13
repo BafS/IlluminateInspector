@@ -1,0 +1,204 @@
+<h1>Profiling</h1>
+<p class="lead text-muted">Timeline from "<?= $request->method ?> <?= $request->uri ?>" — <?= ($this->date)($token) ?></p>
+
+<div class="page-content">
+    <div class="row col-12">
+        <span class="card p-2" style="max-width: 140px;">
+            <?= round($timeline->timeMax - $timeline->timeMin, 2) ?> ms<br>
+            <small class="text-muted text-small">Total execution time</small>
+        </span>
+    </div>
+
+    <span class="float-right mb-2">
+        <span>
+            <small class="text-muted text-small">Threshold :</small>
+            <input type="number" size="3" name="threshold" id="threshold" value="0" min="0"> <small>ms</small>
+        </span>
+    </span>
+
+    <div class="canvas">
+        <canvas id="timeline"></canvas>
+    </div>
+</div>
+
+<script>
+    const data = <?= json_encode($timeline) ?>;
+
+    const lineHeight = 42;
+    const marginX = 3; // left-right margins
+    let timeThreshold = 0;
+
+    const categories = {
+        http: '#4CAF50',
+        routing: '#3F51B5',
+        bootstrap: '#673AB7',
+        default: '#607D8B',
+    };
+
+    const colors = {
+        lineSeparator: '#d6dce1',
+    };
+
+    const { timeline } = data;
+
+    let minTime = Infinity;
+    let maxTime = 0;
+
+    Object.keys(timeline).forEach(key => {
+        const line = timeline[key];
+        if (line.orig && line.orig + line.duration >= maxTime) {
+            maxTime = line.orig + line.duration;
+        }
+        if (line.orig && line.orig < minTime) {
+            minTime = line.orig;
+        }
+    });
+
+    const c = document.getElementById('timeline');
+    const ctx = c.getContext('2d');
+
+    let diff = maxTime - minTime;
+    let canvasWidth;
+    let canvasHeight;
+    let dt;
+    let rows = 0;
+
+    const updateCanvasSize = () => {
+        canvasWidth = c.width;
+        canvasHeight = c.height;
+
+        if (window.devicePixelRatio > 1) {
+            c.width = canvasWidth * window.devicePixelRatio;
+            c.height = canvasHeight * window.devicePixelRatio;
+            c.style.width = `${canvasWidth}px`;
+            c.style.height = `${canvasHeight}px`;
+
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+        }
+
+        dt = (canvasWidth - marginX) / diff;
+    };
+
+    const getStartEnd = ({ orig, duration }) => {
+        const start = ((orig - minTime) * dt) + marginX / 2;
+        const end = (start + duration * dt);
+        return [start, end];
+    };
+
+    const addTimeline = (name, line) => {
+        const { duration, cat } = line;
+        const [start, end] = getStartEnd(line);
+
+        const y = lineHeight * rows;
+
+        drawLineX(start);
+        drawLineX(end);
+
+        ctx.fillStyle = categories[cat] || categories.default;
+        if (duration > 0) {
+            ctx.fillRect(start, y + lineHeight / 1.75, duration * dt, 7); // Time line
+            ctx.fillRect(start, y + lineHeight / 1.5, 2, 10); // Start point |--
+            ctx.fillRect(end - 2, y + lineHeight / 1.5, 2, 10); // End point --|
+        } else {
+            ctx.fillRect(start - 2, y + lineHeight, 4, - lineHeight / 2);
+        }
+
+        drawLineSeparator(rows);
+    };
+
+    const drawLineSeparator = lineN => {
+        const y = lineN * lineHeight;
+        ctx.beginPath();
+        ctx.moveTo(0, y + lineHeight - .5);
+        ctx.lineWidth = 1;
+        ctx.lineTo(canvasWidth, y + lineHeight - .5);
+        ctx.strokeStyle = colors.lineSeparator;
+        ctx.setLineDash([]);
+        ctx.stroke();
+    };
+
+    const addText = (name, line) => {
+        // const [startAbs, endAbs] = line.time;
+        // const start = (startAbs - minTime) * dt;
+        const { mem, duration } = line;
+        const [start] = getStartEnd(line);
+        const y = lineHeight * rows;
+
+        ctx.fillStyle = '#444';
+        ctx.font = '14px Arial';
+        const textText = `${name}`;
+        const detailText = `[~${Math.round(duration * 100) / 100}ms / ${Math.round(mem / 1024 / 1024 * 100) / 100}Mo]`;
+        const widthText = ctx.measureText(textText + ' ' + detailText).width;
+        if (start + widthText > canvasWidth) {
+            ctx.fillText(textText, canvasWidth - widthText, y + lineHeight / 2.75);
+            ctx.fillStyle = '#777';
+            ctx.fillText(detailText, canvasWidth - ctx.measureText(detailText).width, y + lineHeight / 2.75);
+        } else {
+            ctx.fillText(textText, start, y + lineHeight / 2.75);
+            ctx.fillStyle = '#777';
+            ctx.fillText(detailText, start + ctx.measureText(' ' + textText).width, y + lineHeight / 2.75);
+        }
+    };
+
+    const drawLineX = x => {
+        x = Math.floor(x) + 0.5;
+        ctx.save();
+        ctx.strokeStyle = '#ccc';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvasHeight);
+        ctx.strokeStyle = '#000';
+        ctx.globalAlpha = 0.25;
+        ctx.setLineDash([3, 4]);
+        ctx.stroke();
+        ctx.restore();
+    };
+
+    const drawTimeline = () => {
+        rows = 0;
+
+        const lines = Object.keys(timeline)
+            .map(key => ({ key, line: timeline[key] }))
+            .filter(({ line }) => line.duration >= timeThreshold);
+
+        c.height = lineHeight * Object.keys(lines).length;
+
+        updateCanvasSize();
+
+        lines.forEach(({ key, line }) => {
+            addTimeline(key, line);
+            addText(key, line);
+            ++rows;
+        });
+    };
+
+    (function() {
+        function debounce(func){
+            let timer;
+            return function(event){
+                timer && clearTimeout(timer);
+                timer = setTimeout(func, 500, event);
+            };
+        }
+
+        // resize the canvas to fill browser window dynamically
+        window.addEventListener('resize', debounce(resizeCanvas), false);
+
+        document.querySelector('#threshold').addEventListener('input', function (evt) {
+            timeThreshold = +this.value;
+
+            drawTimeline();
+        });
+
+        function resizeCanvas() {
+            c.width = document.querySelector('#content-wrapper').offsetWidth - 100;
+
+            canvasWidth = c.width;
+
+            drawTimeline();
+        }
+
+        resizeCanvas();
+    })();
+</script>

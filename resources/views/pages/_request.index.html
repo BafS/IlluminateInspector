@@ -1,0 +1,41 @@
+<h1>Requests</h1>
+<p class="lead text-muted pb-1">Last requests</p>
+
+<div class="page-content">
+    <table id="table-requests" class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>Status</th>
+                <th>Verb</th>
+                <th>Uri</th>
+                <th>Date</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach($requests as $timestamp => ['request' => $request, 'response' => $response]): ?>
+            <tr>
+                <td><?php $status = $response->status ?? '-' ?>
+                    <span class="badge badge-light" data-response-status="<?= $status ?>">
+                        <?= $status ?>
+                    </span>
+                </td>
+                <td>
+                    <span class="text-monospace badge badge-light"><?= $request->method ?></span>
+                </td>
+                <td class="text-monospace"><?= $request->uri ?></td>
+                <td class="text-muted"><?= $this->date($timestamp) ?></td>
+                <td>
+                    <a class="btn-sm btn-outline-primary" href="<?= $this->uri ?>/requests/<?= $timestamp ?>">Request</a>
+                    <a class="btn-sm btn-outline-secondary" href="<?= $this->uri ?>/timeline/<?= $timestamp ?>">Timeline</a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    let sort = new Tablesort(document.getElementById('table-requests'));
+    sort.refresh();
+</script>

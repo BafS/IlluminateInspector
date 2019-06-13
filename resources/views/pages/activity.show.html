@@ -1,0 +1,35 @@
+<h1>Activity</h1>
+<p class="lead text-muted pb-1">
+    <span class="text-primary text-monospace"><?= $request->uri ?></span>  (<?= $this->date($token) ?> – <?= $this->since($token) ?>)
+</p>
+<p>
+    <span class="text-monospace"><?= $request->controllerAction ?></span>
+</p>
+
+<div class="page-content">
+    <div class="row col-12 cards-info">
+        <span class="card">
+            <span data-response-status="<?= $response->status ?? '-' ?>"><?= $response->status ?? '-' ?></span>
+            <small class="text-muted">HTTP Status</small>
+        </span>
+        <span class="card">
+            <?= $request->method ?>
+            <small class="text-muted">Method</small>
+        </span>
+        <span class="card">
+            <span class="text-monospace"><?= 11111 ?></span>
+            <small class="text-muted">IP</small>
+        </span>
+        <span class="card">
+            <code><?= $token ?></code>
+            <small class="text-muted">Token</small>
+        </span>
+    </div>
+
+    <div class="row col-12 cards-info">
+        <span class="card">
+            <?= count($events) ?>
+            <small class="text-muted">Events</small>
+        </span>
+    </div>
+</div>
