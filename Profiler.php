@@ -6,7 +6,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Response as IlluminateResponse;
 use Illuminate\Contracts\Container\Container;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\HttpFoundation\Response;
