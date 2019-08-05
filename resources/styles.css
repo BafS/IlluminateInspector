@@ -76,8 +76,13 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination a.page-link {
     opacity: 0.9;
 }
 #sidebar .activity-subnav {
+    max-width: 100%;
     /*border-left: 2px solid var(--primary);*/
     background: rgba(0, 0, 0, .04);
+}
+#sidebar .activity-subnav .nav-link small {
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 #sidebar .active {
     color: var(--gray-dark);
