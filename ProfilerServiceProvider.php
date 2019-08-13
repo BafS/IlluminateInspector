@@ -6,6 +6,7 @@ namespace Quark\Profiler;
 
 use Quark\Profiler\Controllers\ProfilerController;
 use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -26,8 +27,6 @@ class ProfilerServiceProvider extends ServiceProvider
 
     /**
      * Register any application services.
-     *
-     * @return void
      */
     public function register()
     {
@@ -54,20 +53,20 @@ class ProfilerServiceProvider extends ServiceProvider
 
         // Listen events
         $events->listen($this->eventNames['handled'], function (RequestHandled $event) use ($profiler) {
-            Str::startsWith($event->request->getRequestUri(), '/_profiler') && $this->isProfilerRoute = true;
+            $this->isProfilerRoute = $this->isProfilerRequest($event->request);
 
             $profiler->saveRequest($event->request);
             $profiler->saveResponse($event->response);
 
-            $this->app->get(Stopwatch::class)->start('request.handled', 'routing')->stop('request.handled');
+            $this->app->get(Stopwatch::class)->start('request.handled', 'routing')->stop();
         });
 
         $events->listen($this->eventNames['matched'], function (RouteMatched $event) use ($profiler) {
-            Str::startsWith($event->request->getRequestUri(), '/_profiler') && $this->isProfilerRoute = true;
+            $this->isProfilerRoute = $this->isProfilerRequest($event->request);
 
             $profiler->saveRequest($event->request);
 
-            $this->app->get(Stopwatch::class)->start('route.matched', 'routing')->stop('route.marched');
+            $this->app->get(Stopwatch::class)->start('route.matched', 'routing')->stop();
         });
 
         $events->listen('*', function ($eventName, array $data) use ($profiler) {
@@ -87,6 +86,13 @@ class ProfilerServiceProvider extends ServiceProvider
 
             $profiler->saveData();
         });
+    }
+
+    private function isProfilerRequest(Request $request): bool
+    {
+        $name = $request->route()->getName();
+        return Str::startsWith($name, $this->routeName)
+            || Str::startsWith($request->getRequestUri(), Profiler::ROUTE_PREFIX);
     }
 
     private function registerRoutes()
