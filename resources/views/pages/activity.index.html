@@ -22,35 +22,37 @@
         </thead>
         <tbody>
         <?php foreach($activities as $token => $activity): ?>
-        <tr>
-            <?php $uriBase = $this->uri . "/$token" ?>
-            <td><?php $status = isset($activity->response->status) ? $activity->response->status ?? '-' : '-' ?>
-                <span class="badge badge-light" data-response-status="<?= $status ?>">
-                    <?= $status ?>
-                </span>
-            </td>
-            <td>
-                <span class="badge badge-light">
-                    <?= $activity->request ? $activity->request->method ?? '-' : '-' ?>
-                </span>
-            </td>
-            <?php $requestUri = $activity->request ? $activity->request->uri : '' ?>
-            <td class="text-monospace<?= strlen($requestUri) > 20 ? ' text-small' : '' ?>"><?= $requestUri ?></td>
-            <td>
-                <a class="text-dark" href="<?= $uriBase ?>?panel=events">
-                    <?= !empty($activity->events) ? count($activity->events) : 0 ?>
-                </a>
-            </td>
-            <td class="text-muted text-small">
-                <a class="text-muted" href="<?= $uriBase ?>"><?= $this->date($token) ?></a>
-            </td>
-            <td style="min-width: 80px">
-                <a class="btn-sm btn-outline-primary" href="<?= $uriBase ?>"><i data-feather="info"></i></a>
-                <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=request"><i data-feather="shuffle"></i></a>
-                <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=timeline"><i data-feather="git-commit"></i></a>
-                <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=request"><i data-feather="radio"></i></a>
-            </td>
-        </tr>
+            <?php
+            $requestUri = $activity->request ? $activity->request->uri : '';
+            $uriBase = $this->uri . "/$token";
+            ?>
+            <tr data-request-details-uri="<?= $uriBase ?>">
+                <td><?php $status = isset($activity->response->status) ? $activity->response->status ?? '-' : '-' ?>
+                    <span class="badge badge-light" data-response-status="<?= $status ?>">
+                        <?= $status ?>
+                    </span>
+                </td>
+                <td>
+                    <span class="badge badge-light">
+                        <?= $activity->request ? $activity->request->method ?? '-' : '-' ?>
+                    </span>
+                </td>
+                <td class="text-monospace<?= strlen($requestUri) > 20 ? ' text-small' : '' ?>"><?= $requestUri ?></td>
+                <td>
+                    <a class="text-dark" href="<?= $uriBase ?>?panel=events">
+                        <?= !empty($activity->events) ? count($activity->events) : 0 ?>
+                    </a>
+                </td>
+                <td class="text-muted text-small">
+                    <a class="text-muted" href="<?= $uriBase ?>"><?= $this->date($token) ?></a>
+                </td>
+                <td style="min-width: 80px">
+                    <a class="btn-sm btn-outline-primary" href="<?= $uriBase ?>"><i data-feather="info"></i></a>
+                    <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=request"><i data-feather="shuffle"></i></a>
+                    <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=timeline"><i data-feather="git-commit"></i></a>
+                    <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=request"><i data-feather="radio"></i></a>
+                </td>
+            </tr>
         <?php endforeach; ?>
         </tbody>
     </table>
