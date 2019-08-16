@@ -23,7 +23,7 @@
         <tbody>
         <?php foreach($activities as $token => $activity): ?>
             <?php
-            $requestUri = $activity->request ? $activity->request->uri : '';
+            $requestUri = isset($activity->request) ? $activity->request->uri : '';
             $uriBase = $this->uri . "/$token";
             ?>
             <tr data-request-details-uri="<?= $uriBase ?>">
@@ -34,7 +34,7 @@
                 </td>
                 <td>
                     <span class="badge badge-light">
-                        <?= $activity->request ? $activity->request->method ?? '-' : '-' ?>
+                        <?= isset($activity->request) ? $activity->request->method ?? '-' : '-' ?>
                     </span>
                 </td>
                 <td class="text-monospace<?= strlen($requestUri) > 20 ? ' text-small' : '' ?>"><?= $requestUri ?></td>

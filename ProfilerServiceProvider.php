@@ -90,7 +90,7 @@ class ProfilerServiceProvider extends ServiceProvider
 
     private function isProfilerRequest(Request $request): bool
     {
-        $name = $request->route()->getName();
+        $name = $request->route() ? $request->route()->getName() : null;
         return Str::startsWith($name, $this->routeName)
             || Str::startsWith($request->getRequestUri(), Profiler::ROUTE_PREFIX);
     }

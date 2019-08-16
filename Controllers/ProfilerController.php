@@ -137,7 +137,7 @@ class ProfilerController
     protected function since($timestamp): string
     {
         $ago = new DateTime();
-        $ago->setTimestamp($timestamp);
+        $ago->setTimestamp((int) $timestamp);
         $diff = (new DateTime())->diff($ago);
 
         $diff->w = floor($diff->d / 7);
@@ -180,10 +180,10 @@ class ProfilerController
                 return $res;
             },
             'date' => function ($timestamp): string {
-                if (strpos($timestamp, '_') !== false) {
+                if (is_string($timestamp) && strpos($timestamp, '_') !== false) {
                     $timestamp = (float) str_replace('_', '.', $timestamp);
                 }
-                $date = (new \DateTime())->setTimestamp((float) $timestamp);
+                $date = (new \DateTime())->setTimestamp((int) $timestamp);
                 return $date->format('Y-m-d H:i:s');
             },
             'since' => function ($timestamp): string {
