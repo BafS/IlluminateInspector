@@ -165,13 +165,13 @@ class Profiler
 
         $ts = microtime(true);
         $sec = (int) $ts;
-        $msec = (int) (($ts - $sec) * 100);
+        $msec = (int) (($ts - $sec) * 10000);
 
         $this->currentData['timeline'] = $this->getStopwatchEvents();
 
 
         file_put_contents(
-            sprintf('%s%d_%02d', $this->basePath(self::CACHE_DIR), $sec, $msec),
+            sprintf('%s%d_%04d', $this->basePath(self::CACHE_DIR), $sec, $msec),
             json_encode($this->currentData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
         );
     }

@@ -40,7 +40,7 @@ class ProfilerController
 
         return $this->render($req, 'activity.index', [
             'meta' => ['last' => $last],
-            'activities' => $activities
+            'activities' => $activities,
         ]);
     }
 
@@ -202,7 +202,7 @@ class ProfilerController
                 $dumper->dump($var, null, [
                     // 1 and 160 are the default values for these options
                     'maxDepth' => 3,
-                    'maxStringLength' => 160
+                    'maxStringLength' => 160,
                 ]);
             },
         ]))->render('layout', ['page' => $page, 'token' => $data['token'] ?? null, 'data' => $data]);
