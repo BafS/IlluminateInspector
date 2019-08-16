@@ -14,10 +14,12 @@
     <?php foreach($events ?? [] as $i => $event): ?>
             <tr>
                 <td>
-                    <small class="text-monospace"><?= $event->name ?? '' ?></small>
+                    <a class="text-dark text-monospace" href="?panel=event&n=<?= $i ?>">
+                        <small><?= $event->name ?? '' ?></small>
+                    </a>
                     <?php if ($event->core): ?><small class="badge badge-warning">core</small><?php endif; ?>
                 </td>
-                <td class="text-muted"><?= $this->date($event->timestamp) ?></td>
+                <td class="text-muted text-small"><?= $this->date($event->timestamp) ?></td>
                 <td>
                     <a class="btn-sm btn-outline-primary" href="?panel=event&n=<?= $i ?>">Event</a>
                     <a class="btn-sm btn-outline-secondary" href="?panel=timeline">Timeline</a>
