@@ -17,7 +17,7 @@ class ProfilerServiceProvider extends ServiceProvider
 {
     protected $routeName = 'profiler';
 
-    protected $isProfilerRoute = false;
+    protected $isExcludedRoute = false;
 
     /** @var string[] */
     protected $eventNames = [
@@ -53,7 +53,7 @@ class ProfilerServiceProvider extends ServiceProvider
 
         // Listen events
         $events->listen($this->eventNames['handled'], function (RequestHandled $event) use ($profiler) {
-            $this->isProfilerRoute = $this->isProfilerRequest($event->request);
+            $this->isExcludedRoute = $this->isExcludedRequest($event->request);
 
             $profiler->saveRequest($event->request);
             $profiler->saveResponse($event->response);
@@ -62,7 +62,7 @@ class ProfilerServiceProvider extends ServiceProvider
         });
 
         $events->listen($this->eventNames['matched'], function (RouteMatched $event) use ($profiler) {
-            $this->isProfilerRoute = $this->isProfilerRequest($event->request);
+            $this->isExcludedRoute = $this->isExcludedRequest($event->request);
 
             $profiler->saveRequest($event->request);
 
@@ -80,7 +80,7 @@ class ProfilerServiceProvider extends ServiceProvider
 
         $this->app->terminating(function (Profiler $profiler) {
             // Don't save data if we are on the profiler
-            if ($this->isProfilerRoute) {
+            if ($this->isExcludedRoute) {
                 return;
             }
 
@@ -88,28 +88,32 @@ class ProfilerServiceProvider extends ServiceProvider
         });
     }
 
-    private function isProfilerRequest(Request $request): bool
+    private function isExcludedRequest(Request $request): bool
     {
         $name = $request->route() ? $request->route()->getName() : null;
+        $uri = $request->getRequestUri();
+
         return Str::startsWith($name, $this->routeName)
-            || Str::startsWith($request->getRequestUri(), Profiler::ROUTE_PREFIX);
+            || Str::startsWith($uri, Profiler::ROUTE_PREFIX)
+            || Str::contains($uri, config('profiler.routes_to_exclude', []));
     }
 
     private function registerRoutes()
     {
         // Register a special route for the profiler
         $router = $this->app->get('router');
+
         $router
             ->get(Profiler::ROUTE_PREFIX, [ProfilerController::class, 'indexActivity'])
-            ->name($this->routeName);
+            ->name("{$this->routeName}.activity.index");
         $router
             ->get(Profiler::ROUTE_PREFIX . '/env', [ProfilerController::class, 'indexEnvironment'])
-            ->name($this->routeName);
+            ->name("{$this->routeName}.environment.index");
         $router
             ->get(Profiler::ROUTE_PREFIX . '/api', [ProfilerController::class, 'indexActivityRest'])
-            ->name($this->routeName);
+            ->name("{$this->routeName}.api.activity.index");
         $router
             ->get(Profiler::ROUTE_PREFIX . '/{token}', [ProfilerController::class, 'showActivity'])
-            ->name($this->routeName);
+            ->name("{$this->routeName}.activity.show");
     }
 }

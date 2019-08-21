@@ -10,12 +10,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Contracts\Container\Container;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Component\Stopwatch\StopwatchPeriod;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
 class Profiler
 {
-    const ROUTE_PREFIX = '/_profiler';
+    public const ROUTE_PREFIX = '/_profiler';
+
     protected const CACHE_DIR = 'cache/profiler/';
 
     /** @var Stopwatch */
@@ -102,6 +104,7 @@ class Profiler
         if ($response instanceof RedirectResponse) {
             return 'Redirected to '.$response->getTargetUrl();
         }
+
         return 'HTML Response';
     }
 
@@ -240,7 +243,7 @@ class Profiler
                     'start' => $event->getStartTime(),
                     'end' => $event->getEndTime(),
                     'duration' => $event->getDuration(),
-                    'periods' => count($event->getPeriods()) > 1 ? array_map(static function ($per) {
+                    'periods' => count($event->getPeriods()) > 1 ? array_map(static function (StopwatchPeriod $per) {
                         return [
                             'mem' => $per->getMemory(),
                             'start' => $per->getStartTime(),
