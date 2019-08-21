@@ -8,6 +8,7 @@ use DateTime;
 use Quark\Profiler\Profiler;
 use Quark\Profiler\View;
 use Illuminate\Http\Request;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\AbstractDumper;
@@ -48,7 +49,11 @@ class ProfilerController
     {
         $panel = $req->query->get('panel', 'activity');
 
-        $info = $this->profiler->readInfo($token);
+        try {
+            $info = $this->profiler->readInfo($token);
+        } catch (RuntimeException $e) {
+            return $this->render($req, '404');
+        }
 
         if (substr($panel, -1, 1) === 's') {
             $name = substr($panel, 0, -1) . '.index';
@@ -164,7 +169,7 @@ class ProfilerController
         return $string ? implode(', ', $string) . ' ago' : 'just now';
     }
 
-    protected function render(Request $req, string $page, array $data): string
+    protected function render(Request $req, string $page, array $data = []): string
     {
         return (new View(static::VIEWS_DIR, [
             'uri' => $req->getUriForPath(Profiler::ROUTE_PREFIX),

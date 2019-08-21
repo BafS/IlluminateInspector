@@ -47,7 +47,7 @@ class Profiler
         $this->currentData['request'] = [
             'uri' => str_replace($request->root(), '', $request->fullUrl()) ?: '/',
             'method' => $request->method(),
-//            'ip'
+            'ip' => $request->ip(),
             'controllerAction' => optional($request->route())->getActionName(),
             'middleware' => array_values(optional($request->route())->gatherMiddleware() ?? []),
             'headers' => $request->headers->all(),
@@ -266,12 +266,12 @@ class Profiler
 
     private function basePath($path = ''): string
     {
-        if (function_exists('base_path')) {
-            return base_path($path);
-        }
-
         if ($this->container->has('path.base')) {
             return $this->container->get('path.base') . '/' . $path;
+        }
+
+        if (function_exists('base_path')) {
+            return base_path($path);
         }
 
         return '../' . $path; // From `public/`

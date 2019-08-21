@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Quark\Profiler;
 
 class View
@@ -19,7 +21,7 @@ class View
 
     public function render(string $template, array $data = []): string
     {
-        extract($data, null);
+        extract($data);
         ob_start();
         include $this->dir . str_replace('..', '', $template) . '.html';
         return ob_get_clean();
