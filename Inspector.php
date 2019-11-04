@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Quark\Profiler;
+namespace Quark\Inspector;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
@@ -14,11 +14,11 @@ use Symfony\Component\Stopwatch\StopwatchPeriod;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
-class Profiler
+class Inspector
 {
-    public const ROUTE_PREFIX = '/_profiler';
+    public const ROUTE_PREFIX = '/_inspector';
 
-    protected const CACHE_DIR = 'cache/profiler/';
+    protected const CACHE_DIR = 'cache/inspector/';
 
     /** @var Stopwatch */
     private $stopwatch;
@@ -37,8 +37,8 @@ class Profiler
         $this->container = $container;
         $this->stopwatch = $stopwatch;
 
-        if (!is_dir($this->basePath(Profiler::CACHE_DIR))) {
-            if (!mkdir($concurrentDirectory = $this->basePath(Profiler::CACHE_DIR), 0755, true) && !is_dir($concurrentDirectory)) {
+        if (!is_dir($this->basePath(Inspector::CACHE_DIR))) {
+            if (!mkdir($concurrentDirectory = $this->basePath(Inspector::CACHE_DIR), 0755, true) && !is_dir($concurrentDirectory)) {
                 throw new \RuntimeException(sprintf('Directory "%s" was not created', $concurrentDirectory));
             }
         }
@@ -227,7 +227,7 @@ class Profiler
 
     public function getStopwatchEvents(): array
     {
-        $profilerData = [];
+        $inspectorData = [];
         $min = PHP_INT_MAX;
         $max = 0;
 
@@ -235,7 +235,7 @@ class Profiler
             foreach ($section->getEvents() as $eventName => $event) {
                 $origin = $event->getOrigin();
 
-                $profilerData['timeline'][$eventName] = [
+                $inspectorData['timeline'][$eventName] = [
                     'sect' => $section->getId(),
                     'cat' => $event->getCategory(),
                     'mem' => $event->getMemory(),
@@ -261,10 +261,10 @@ class Profiler
             }
         }
 
-        $profilerData['timeMax'] = $max; // total duration
-        $profilerData['timeMin'] = $min; // total duration
+        $inspectorData['timeMax'] = $max; // total duration
+        $inspectorData['timeMin'] = $min; // total duration
 
-        return $profilerData;
+        return $inspectorData;
     }
 
     private function basePath($path = ''): string

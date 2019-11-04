@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Quark\Profiler\Controllers;
+namespace Quark\Inspector\Controllers;
 
 use DateTime;
-use Quark\Profiler\Profiler;
-use Quark\Profiler\View;
+use Quark\Inspector\Inspector;
+use Quark\Inspector\View;
 use Illuminate\Http\Request;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,28 +14,28 @@ use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\AbstractDumper;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 
-class ProfilerController
+class InspectorController
 {
     protected const VIEWS_DIR = __DIR__ . '/../resources/views/';
 
-    /** @var Profiler */
-    private $profiler;
+    /** @var Inspector */
+    private $inspector;
 
-    public function __construct(Profiler $profiler)
+    public function __construct(Inspector $inspector)
     {
-        $this->profiler = $profiler;
+        $this->inspector = $inspector;
     }
 
     public function indexActivity(Request $req)
     {
-        $names = $this->profiler->getFileNames();
+        $names = $this->inspector->getFileNames();
 
         $last = (int) $req->query->get('last', 10);
         $last > 0 && $names = $names->forPage(0, $last);
 
         $activities = [];
         foreach ($names as $file) {
-            $data = $this->profiler->readInfo($file);
+            $data = $this->inspector->readInfo($file);
             $activities[$file] = $data;
         }
 
@@ -50,7 +50,7 @@ class ProfilerController
         $panel = $req->query->get('panel', 'activity');
 
         try {
-            $info = $this->profiler->readInfo($token);
+            $info = $this->inspector->readInfo($token);
         } catch (RuntimeException $e) {
             return $this->render($req, '404');
         }
@@ -82,9 +82,9 @@ class ProfilerController
 
     public function showTimeline(Request $req, $token)
     {
-        $data = $this->profiler->readInfo($token);
+        $data = $this->inspector->readInfo($token);
 
-        return $this->render($req, 'timeline.show', [
+        return $this->render($req, 'profiler.show', [
             'id' => $token,
             'request' => $data->request ?? null,
             'timeline' => $data->timeline ?? null,
@@ -93,7 +93,7 @@ class ProfilerController
 
     public function showRequest(Request $req, $token)
     {
-        $info = $this->profiler->readInfo($token);
+        $info = $this->inspector->readInfo($token);
 
         return $this->render($req, 'request.show', [
             'request' => $info->request ?? null,
@@ -104,7 +104,7 @@ class ProfilerController
 
     public function showEvent(Request $req, $token)
     {
-        $events = $this->profiler->readInfo($token)->events ?? [];
+        $events = $this->inspector->readInfo($token)->events ?? [];
 
         $event = $events[$req->query('n', 0)] ?? null;
 
@@ -172,7 +172,7 @@ class ProfilerController
     protected function render(Request $req, string $page, array $data = []): string
     {
         return (new View(static::VIEWS_DIR, [
-            'uri' => $req->getUriForPath(Profiler::ROUTE_PREFIX),
+            'uri' => $req->getUriForPath(Inspector::ROUTE_PREFIX),
             'isPanel' => function ($panel, string $output = null, string $default = '') use ($req) {
                 $panel = (array) $panel;
 
@@ -198,7 +198,7 @@ class ProfilerController
                 return $this->since($timestamp);
             },
             'lastToken' => function () {
-                return $this->profiler->getFileNames()->first();
+                return $this->inspector->getFileNames()->first();
             },
             'dump' => function ($variable, bool $light = false): void {
                 $var = (new VarCloner())->cloneVar($variable);

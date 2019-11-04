@@ -15,8 +15,8 @@
         <a class="nav-link<?= $this->isPanel(['events', 'event'], ' active') ?>" href="<?= $this->uri ?>/<?= $token ?>?panel=events">
             <i data-feather="radio"></i> Events <small class="text-muted">(<?= count($events) ?>)</small>
         </a>
-        <a class="nav-link<?= $this->isPanel('timeline', ' active')  ?>" href="<?= $this->uri ?>/<?= $token ?>?panel=timeline">
-            <i data-feather="git-commit"></i> Timeline
+        <a class="nav-link<?= $this->isPanel('profiler', ' active')  ?>" href="<?= $this->uri ?>/<?= $token ?>?panel=profiler">
+            <i data-feather="git-commit"></i> Profiler
         </a>
     </div>
 </div>

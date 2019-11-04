@@ -1,4 +1,4 @@
-# Illuminate Profiler
+# Illuminate Inspector
 
 > Beta
 
@@ -7,8 +7,7 @@ For Laravel/Lumen and applications using Illuminate components.
 ## Installation
 
 ```sh
-composer req quarkdev/profiler
+composer req quarkdev/inspector
 ```
 
-Register `\Quark\Profiler\ProfilerServiceProvider` in config/app.php.
-
+Register the service provider `\Quark\Inspector\InspectorServiceProvider` in config/app.php.

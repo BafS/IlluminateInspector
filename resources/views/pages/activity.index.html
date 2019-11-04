@@ -4,7 +4,7 @@
     <p class="lead text-muted float-left mb-0">Last <?= $meta['last'] ?: '' ?> activities</p>
     <a class="btn btn-sm btn-primary float-right<?= $meta['last'] == '' ? ' disabled' : '' ?>" href="?last">All</a>
     <a class="btn btn-sm btn-primary float-right mr-2<?= $meta['last'] == 10 ? ' disabled' : '' ?>" href="?last=10">Last 10</a>
-    <a class="btn btn-sm btn-outline-secondary float-right mr-2" href="<?= $this->uri ?>/<?= $this->lastToken() ?>?panel=timeline">Last timeline</a>
+    <a class="btn btn-sm btn-outline-secondary float-right mr-2" href="<?= $this->uri ?>/<?= $this->lastToken() ?>?panel=profiler">Last profiling</a>
     <a class="btn btn-sm btn-outline-secondary float-right mr-2" href="<?= $this->uri ?>/<?= $this->lastToken() ?>">Last activity</a>
 </div>
 
@@ -49,7 +49,7 @@
                 <td style="min-width: 80px">
                     <a class="btn-sm btn-outline-primary" href="<?= $uriBase ?>"><i data-feather="info"></i></a>
                     <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=request"><i data-feather="shuffle"></i></a>
-                    <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=timeline"><i data-feather="git-commit"></i></a>
+                    <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=profiler"><i data-feather="git-commit"></i></a>
                     <a class="btn-sm btn-outline-secondary" href="<?= $uriBase ?>?panel=request"><i data-feather="radio"></i></a>
                 </td>
             </tr>
