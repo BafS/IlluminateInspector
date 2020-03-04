@@ -30,7 +30,7 @@ class InspectorController
     {
         $names = $this->inspector->getFileNames();
 
-        $last = (int) $req->query->get('last', 10);
+        $last = $req->query->getInt('last', 10);
         $last > 0 && $names = $names->forPage(0, $last);
 
         $activities = [];
@@ -63,7 +63,7 @@ class InspectorController
 
         $extra = [];
         if ($panel === 'event' && $req->query->has('n')) {
-            $n = (int) $req->query->get('n');
+            $n = $req->query->getInt('n');
             $extra = [
                 'event' => $info->events[$n],
             ];
