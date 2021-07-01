@@ -34,6 +34,6 @@ class View
 
     public function __call($method, $args)
     {
-        return ($this->data[$method] ?? function () {})(...$args);
+        return ($this->data[$method] ?? static function () {})(...$args);
     }
 }

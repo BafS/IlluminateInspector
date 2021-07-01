@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Quark\Inspector;
 
-use Illuminate\Support\Str;
 use Illuminate\Support\Collection;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request as IlluminateRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Contracts\Container\Container;
+use Psr\Container\ContainerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Stopwatch\StopwatchPeriod;
 use Symfony\Component\HttpFoundation\Response;
@@ -26,13 +26,13 @@ class Inspector
     /** @var mixed[] */
     private $currentData;
 
-    /** @var Container */
+    /** @var ContainerInterface */
     private $container;
 
     /** @var string[] */
     private $files;
 
-    public function __construct(Stopwatch $stopwatch, Container $container)
+    public function __construct(Stopwatch $stopwatch, ContainerInterface $container)
     {
         $this->container = $container;
         $this->stopwatch = $stopwatch;
@@ -44,19 +44,26 @@ class Inspector
         }
     }
 
+    private function getUri(Request $request): string
+    {
+        if (null !== $qs = $request->getQueryString()) {
+            $qs = '?'.$qs;
+        }
+
+        return $request->getPathInfo() . $qs;
+    }
+
     public function saveRequest(Request $request)
     {
-        $this->currentData['request'] = [
-            'uri' => str_replace($request->root(), '', $request->fullUrl()) ?: '/',
-            'method' => $request->method(),
-            'ip' => $request->ip(),
-            'controllerAction' => optional($request->route())->getActionName(),
-            'middleware' => array_values(optional($request->route())->gatherMiddleware() ?? []),
+        $data = [
+            'uri' => $this->getUri($request),
+            'method' => $request->getMethod(),
+            'ip' => $request->getClientIp(),
             'headers' => $request->headers->all(),
             'cookies' => $request->cookies->all(),
-    //                'headers' => $this->headers($request->headers->all()),
+            //                'headers' => $this->headers($request->headers->all()),
             'payload' => $this->input($request), // todo filter some data ?
-    //                'session' => $this->payload($this->sessionVariables($event->request)),
+            //                'session' => $this->payload($this->sessionVariables($event->request)),
             'duration' => $this->durationFromStart(),
             'server' => $request->server->all(),
             'query' => $request->query->all(),
@@ -64,6 +71,13 @@ class Inspector
             'attributes' => $request->attributes->all(),
 //            'files' => $request->files->all(),
         ];
+
+        if ($request instanceof IlluminateRequest) {
+            $data['controllerAction'] = optional($request->route())->getActionName();
+            $data['middleware'] = array_values(optional($request->route())->gatherMiddleware() ?? []);
+        }
+
+        $this->currentData['request'] = $data;
     }
 
     public function saveResponse(Response $response)
@@ -92,7 +106,6 @@ class Inspector
     /**
      * Format the given response object.
      *
-     * @param  \Symfony\Component\HttpFoundation\Response  $response
      * @return array|string
      */
     protected function response(Response $response)
@@ -141,22 +154,28 @@ class Inspector
 
     protected function isCoreEvent(string $eventName): bool
     {
-        return Str::is(
-            ['Illuminate\*', 'eloquent*', 'bootstrapped*', 'bootstrapping*', 'creating*', 'composing*'],
-            $eventName
-        );
+        $startWith = ['Illuminate\\', 'eloquent', 'bootstrapped', 'bootstrapping', 'creating', 'composing'];
+
+        foreach ($startWith as $start) {
+            if (strpos($eventName, $start) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function input(Request $request): ?array
     {
         $files = $request->files->all();
-        array_walk_recursive($files, function (&$file) {
+        array_walk_recursive($files, static function (&$file) {
             $file = [
                 'name' => $file->getClientOriginalName(),
                 'size' => $file->isFile() ? ($file->getSize() / 1000) . 'KB' : '0',
             ];
         });
-        return array_replace_recursive($request->input(), $files);
+
+        return array_replace_recursive($request->request->all(), $files);
     }
 
     public function saveData(): void
@@ -197,7 +216,7 @@ class Inspector
         });
     }
 
-    protected function timestampFromFile(string $filename): int
+    protected function timestampFromFile(string $filename): float
     {
         return (float) str_replace('_', '.', $filename);
     }

@@ -7,9 +7,10 @@ namespace Quark\Inspector\Controllers;
 use DateTime;
 use Quark\Inspector\Inspector;
 use Quark\Inspector\View;
-use Illuminate\Http\Request;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
 use Symfony\Component\VarDumper\Dumper\AbstractDumper;
 use Symfony\Component\VarDumper\Dumper\HtmlDumper;
@@ -106,7 +107,7 @@ class InspectorController
     {
         $events = $this->inspector->readInfo($token)->events ?? [];
 
-        $event = $events[$req->query('n', 0)] ?? null;
+        $event = $events[$req->query->get('n', 0)] ?? null;
 
         return $this->render($req, 'event.show', [
             'event' => $event,
@@ -169,9 +170,9 @@ class InspectorController
         return $string ? implode(', ', $string) . ' ago' : 'just now';
     }
 
-    protected function render(Request $req, string $page, array $data = []): string
+    protected function render(Request $req, string $page, array $data = []): Response
     {
-        return (new View(static::VIEWS_DIR, [
+        $view = (new View(static::VIEWS_DIR, [
             'uri' => $req->getUriForPath(Inspector::ROUTE_PREFIX),
             'isPanel' => function ($panel, string $output = null, string $default = '') use ($req) {
                 $panel = (array) $panel;
@@ -211,5 +212,7 @@ class InspectorController
                 ]);
             },
         ]))->render('layout', ['page' => $page, 'token' => $data['token'] ?? null, 'data' => $data]);
+
+        return new Response($view);
     }
 }
