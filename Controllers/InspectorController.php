@@ -8,7 +8,6 @@ use DateTime;
 use Quark\Inspector\Inspector;
 use Quark\Inspector\View;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\VarDumper\Cloner\VarCloner;
@@ -17,17 +16,16 @@ use Symfony\Component\VarDumper\Dumper\HtmlDumper;
 
 class InspectorController
 {
-    protected const VIEWS_DIR = __DIR__ . '/../resources/views/';
+    private const VIEWS_DIR = __DIR__ . '/../resources/views/';
 
-    /** @var Inspector */
-    private $inspector;
+    private Inspector $inspector;
 
     public function __construct(Inspector $inspector)
     {
         $this->inspector = $inspector;
     }
 
-    public function indexActivity(Request $req)
+    public function indexActivity(Request $req): Response
     {
         $names = $this->inspector->getFileNames();
 
@@ -46,7 +44,7 @@ class InspectorController
         ]);
     }
 
-    public function showActivity(Request $req, $token)
+    public function showActivity(Request $req, $token): Response
     {
         $panel = $req->query->get('panel', 'activity');
 
@@ -81,7 +79,7 @@ class InspectorController
         ] + $extra);
     }
 
-    public function showTimeline(Request $req, $token)
+    public function showTimeline(Request $req, $token): Response
     {
         $data = $this->inspector->readInfo($token);
 
@@ -92,7 +90,7 @@ class InspectorController
         ]);
     }
 
-    public function showRequest(Request $req, $token)
+    public function showRequest(Request $req, $token): Response
     {
         $info = $this->inspector->readInfo($token);
 
@@ -103,7 +101,7 @@ class InspectorController
         ]);
     }
 
-    public function showEvent(Request $req, $token)
+    public function showEvent(Request $req, $token): Response
     {
         $events = $this->inspector->readInfo($token)->events ?? [];
 
@@ -114,7 +112,7 @@ class InspectorController
         ]);
     }
 
-    public function indexEnvironment(Request $req)
+    public function indexEnvironment(Request $req): Response
     {
         $variables = getenv();
 
@@ -131,13 +129,8 @@ class InspectorController
             'xdebugEnabled' => \extension_loaded('xdebug'),
             'apcuEnabled' => \extension_loaded('apcu') && filter_var(ini_get('apc.enabled'), FILTER_VALIDATE_BOOLEAN),
             'zendOpcacheEnabled' => \extension_loaded('Zend OPcache') && filter_var(ini_get('opcache.enable'), FILTER_VALIDATE_BOOLEAN),
-            'iniFiles' => $files = explode(',', php_ini_scanned_files() ?? ''),
+            'iniFiles' => explode(',', php_ini_scanned_files() ?? ''),
         ]);
-    }
-
-    protected function json($data)
-    {
-        return new JsonResponse($data);
     }
 
     protected function since($timestamp): string

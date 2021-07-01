@@ -18,18 +18,15 @@ class Inspector
 {
     public const ROUTE_PREFIX = '/_inspector';
 
-    protected const CACHE_DIR = 'cache/inspector/';
+    private const CACHE_DIR = 'cache/inspector/';
 
-    /** @var Stopwatch */
-    private $stopwatch;
+    private Stopwatch $stopwatch;
 
-    /** @var mixed[] */
-    private $currentData;
+    private array $currentData = [];
 
-    /** @var ContainerInterface */
-    private $container;
+    private ContainerInterface $container;
 
-    /** @var string[] */
+    /** @var iterable<string> */
     private $files;
 
     public function __construct(Stopwatch $stopwatch, ContainerInterface $container)
@@ -53,7 +50,7 @@ class Inspector
         return $request->getPathInfo() . $qs;
     }
 
-    public function saveRequest(Request $request)
+    public function saveRequest(Request $request): void
     {
         $data = [
             'uri' => $this->getUri($request),
@@ -80,7 +77,7 @@ class Inspector
         $this->currentData['request'] = $data;
     }
 
-    public function saveResponse(Response $response)
+    public function saveResponse(Response $response): void
     {
         $this->currentData['response'] = [
             'status' => $response->getStatusCode(),
@@ -123,17 +120,15 @@ class Inspector
 
     /**
      * Determine if the content is within the set limits.
-     *
-     * @param  string  $content
-     * @return bool
      */
-    public function contentWithinLimits($content)
+    public function contentWithinLimits(string $content): bool
     {
         $limit = $this->options['size_limit'] ?? 64;
+
         return mb_strlen($content) / 1000 <= $limit;
     }
 
-    public function saveEvent($event, $payload = null)
+    public function saveEvent($event, $payload = null): void
     {
         if (class_exists($event) && isset($payload[0]) && is_object($payload[0])) {
             $info = [

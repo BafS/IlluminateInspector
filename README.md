@@ -2,7 +2,7 @@
 
 > Beta
 
-For Laravel/Lumen and applications using Illuminate components.
+Inspector for Laravel/Lumen and applications using Illuminate components.
 
 ## Installation
 

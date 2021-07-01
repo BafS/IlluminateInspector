@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Quark\Inspector;
 
-class View
+final class View
 {
-    /** @var string */
-    private $dir;
+    private string $dir;
 
-    /** @var array */
-    private $data;
+    private array $data;
 
     public function __construct(string $dir, array $data = [])
     {

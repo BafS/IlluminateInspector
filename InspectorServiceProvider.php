@@ -15,12 +15,12 @@ use Symfony\Component\Stopwatch\Stopwatch;
 
 class InspectorServiceProvider extends ServiceProvider
 {
-    protected $routeName = 'inspector';
+    protected string $routeName = 'inspector';
 
-    protected $isExcludedRoute = false;
+    protected bool $isExcludedRoute = false;
 
     /** @var string[] */
-    protected $eventNames = [
+    protected array $eventNames = [
         'handled' => RequestHandled::class,
         'matched' => RouteMatched::class,
     ];
@@ -28,7 +28,7 @@ class InspectorServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register()
+    public function register(): void
     {
         $this->registerRoutes();
 
@@ -40,7 +40,7 @@ class InspectorServiceProvider extends ServiceProvider
         });
     }
 
-    public function boot()
+    public function boot(): void
     {
         if ($this->app->has('events')) {
             $events = $this->app->get('events');
@@ -98,7 +98,7 @@ class InspectorServiceProvider extends ServiceProvider
             || Str::contains($uri, config('inspector.routes_to_exclude', []));
     }
 
-    private function registerRoutes()
+    private function registerRoutes(): void
     {
         // Register a special route for the inspector
         $router = $this->app->get('router');
