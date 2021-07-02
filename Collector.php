@@ -15,6 +15,8 @@ class Collector
 {
     private Stopwatch $stopwatch;
 
+    protected array $coreEvents = ['Illuminate\\', 'eloquent', 'bootstrapped', 'bootstrapping', 'creating', 'composing'];
+
     private array $currentData = [];
 
     public function __construct(Stopwatch $stopwatch)
@@ -130,9 +132,7 @@ class Collector
 
     protected function isCoreEvent(string $eventName): bool
     {
-        $startWith = ['Illuminate\\', 'eloquent', 'bootstrapped', 'bootstrapping', 'creating', 'composing'];
-
-        foreach ($startWith as $start) {
+        foreach ($this->coreEvents as $start) {
             if (strpos($eventName, $start) === 0) {
                 return true;
             }

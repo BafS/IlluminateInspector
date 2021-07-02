@@ -30,7 +30,14 @@ class InspectorController
         $names = $this->inspector->getFileNames();
 
         $last = $req->query->getInt('last', 10);
-        $last > 0 && $names = $names->forPage(0, $last);
+
+        $forPage = static function ($data, int $page, int $perPage) {
+            $offset = ($page - 1) * $perPage;
+
+            return array_slice($data, $offset, $perPage, true);
+        };
+
+        $last > 0 && $names = $forPage($names, 0, $last);
 
         $activities = [];
         foreach ($names as $file) {
@@ -192,7 +199,7 @@ class InspectorController
                 return $this->since($timestamp);
             },
             'lastToken' => function () {
-                return $this->inspector->getFileNames()->first();
+                return $this->inspector->getFileNames()[0] ?? null;
             },
             'dump' => function ($variable, bool $light = false): void {
                 $var = (new VarCloner())->cloneVar($variable);

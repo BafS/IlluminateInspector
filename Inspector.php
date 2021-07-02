@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Quark\Inspector;
 
-use Illuminate\Support\Collection;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
@@ -16,8 +15,8 @@ class Inspector
 
     private ContainerInterface $container;
 
-    /** @var iterable<string> */
-    private $files;
+    /** @var string[] */
+    private array $files = [];
 
     public function __construct(ContainerInterface $container)
     {
@@ -57,22 +56,22 @@ class Inspector
         );
     }
 
-    public function getFiles(): Collection
+    public function getFiles(): array
     {
-        if ($this->files) {
+        if (count($this->files) !== 0) {
             // Cached files
             return $this->files;
         }
 
-        $this->files = collect(glob($this->basePath(self::CACHE_DIR) . '*', GLOB_NOSORT));
-        return $this->files->sort()->reverse();
+        $this->files = glob($this->basePath(self::CACHE_DIR) . '*', GLOB_NOSORT);
+        rsort($this->files);
+
+        return $this->files;
     }
 
-    public function getFileNames(): Collection
+    public function getFileNames(): array
     {
-        return $this->getFiles()->map(function ($f) {
-            return basename($f);
-        });
+        return array_map(static fn ($f) => basename($f), $this->getFiles());
     }
 
     public function readInfo($timestamp)
