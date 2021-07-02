@@ -34,10 +34,9 @@ class InspectorServiceProvider extends ServiceProvider
 
         $this->app->singleton(Inspector::class);
 
-        // Register Stopwatch
-        $this->app->singleton(Stopwatch::class, function () {
-            return new Stopwatch(true);
-        });
+        $this->app->singleton(Collector::class);
+
+        $this->app->singleton(Stopwatch::class, fn () => new Stopwatch(true));
     }
 
     public function boot(): void
@@ -49,42 +48,42 @@ class InspectorServiceProvider extends ServiceProvider
         }
         $this->app->singleton(Inspector::class);
 
-        $inspector = $this->app->get(Inspector::class);
+        $collector = $this->app->get(Collector::class);
 
         // Listen events
-        $events->listen($this->eventNames['handled'], function (RequestHandled $event) use ($inspector) {
+        $events->listen($this->eventNames['handled'], function (RequestHandled $event) use ($collector) {
             $this->isExcludedRoute = $this->isExcludedRequest($event->request);
 
-            $inspector->saveRequest($event->request);
-            $inspector->saveResponse($event->response);
+            $collector->saveRequest($event->request);
+            $collector->saveResponse($event->response);
 
             $this->app->get(Stopwatch::class)->start('request.handled', 'routing')->stop();
         });
 
-        $events->listen($this->eventNames['matched'], function (RouteMatched $event) use ($inspector) {
+        $events->listen($this->eventNames['matched'], function (RouteMatched $event) use ($collector) {
             $this->isExcludedRoute = $this->isExcludedRequest($event->request);
 
-            $inspector->saveRequest($event->request);
+            $collector->saveRequest($event->request);
 
             $this->app->get(Stopwatch::class)->start('route.matched', 'routing')->stop();
         });
 
-        $events->listen('*', function ($eventName, array $data) use ($inspector) {
-            if (in_array($eventName, [RouteMatched::class, RequestHandled::class], true)) {
+        $events->listen('*', function ($eventName, array $data) use ($collector) {
+            if (in_array($eventName, $this->eventNames, true)) {
                 return;
             }
 
             $this->app->get(Stopwatch::class)->start($eventName, 'events')->stop($eventName);
-            $inspector->saveEvent($eventName, $data);
+            $collector->saveEvent($eventName, $data);
         });
 
-        $this->app->terminating(function (Inspector $inspector) {
+        $this->app->terminating(function (Inspector $inspector, Collector $collector) {
             // Don't save data if we are on the inspector
             if ($this->isExcludedRoute) {
                 return;
             }
 
-            $inspector->saveData();
+            $inspector->saveData($collector);
         });
     }
 
