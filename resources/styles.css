@@ -20,7 +20,7 @@ h3 {
     /*background: #fff;*/
 }
 .page-content {
-    border-top: 2px solid var(--gray-dark);
+    border-top: 2px solid var(--bs-gray-dark);
     padding-top: 1.5rem;
     margin-top: 1rem;
 }
@@ -45,6 +45,7 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination a.page-link {
     height: 100%;
     /*position: sticky;*/
     position: fixed;
+    z-index: 9;
 
     /*border-right: 2px solid var(--gray);*/
 
@@ -67,6 +68,12 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination a.page-link {
     text-decoration: none;
     text-underline: none;
     padding-left: 0.5rem;
+}
+#sidebar a {
+    text-decoration: none;
+}
+#sidebar a:hover {
+    text-decoration: underline;
 }
 #sidebar .nav-link {
     /*padding-left: 0.2rem;*/
@@ -174,5 +181,5 @@ div.dataTables_wrapper div.dataTables_paginate ul.pagination a.page-link {
 #threshold {
     padding-top: 0;
     padding-bottom: 0;
-    max-width: 40px;
+    max-width: 45px;
 }

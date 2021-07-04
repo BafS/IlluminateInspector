@@ -1,16 +1,16 @@
 <h1>Activities</h1>
 
 <div class="clearfix">
-    <p class="lead text-muted float-left mb-0">Last <?= $meta['last'] ?: '' ?> activities</p>
-    <a class="btn btn-sm btn-primary float-right<?= $meta['last'] == '' ? ' disabled' : '' ?>" href="?last">All</a>
-    <a class="btn btn-sm btn-primary float-right mr-2<?= $meta['last'] == 10 ? ' disabled' : '' ?>" href="?last=10">Last 10</a>
-    <a class="btn btn-sm btn-outline-secondary float-right mr-2" href="<?= $this->uri ?>/<?= $this->lastToken() ?>?panel=profiler">Last profiling</a>
-    <a class="btn btn-sm btn-outline-secondary float-right mr-2" href="<?= $this->uri ?>/<?= $this->lastToken() ?>">Last activity</a>
+    <p class="lead text-muted float-start mb-0">Last <?= $meta['last'] ?: '' ?> activities</p>
+    <a class="btn btn-sm btn-primary float-end<?= $meta['last'] == '' ? ' disabled' : '' ?>" href="?last">All</a>
+    <a class="btn btn-sm btn-primary float-end me-1<?= $meta['last'] == 10 ? ' disabled' : '' ?>" href="?last=10">Last 10</a>
+    <a class="btn btn-sm btn-outline-secondary float-end me-1" href="<?= $this->uri ?>/<?= $this->lastToken() ?>?panel=profiler">Last profiling</a>
+    <a class="btn btn-sm btn-outline-secondary float-end me-1" href="<?= $this->uri ?>/<?= $this->lastToken() ?>">Last activity</a>
 </div>
 
 <div class="page-content">
     <table id="table-activities" class="table table-hover table-data">
-        <thead class="thead-dark">
+        <thead class="table-dark">
         <tr>
             <th>Status</th>
             <th>Verb</th>
@@ -28,16 +28,16 @@
             ?>
             <tr data-request-details-uri="<?= $uriBase ?>">
                 <td><?php $status = isset($activity->response->status) ? $activity->response->status ?? '-' : '-' ?>
-                    <span class="badge badge-light" data-response-status="<?= $status ?>">
+                    <span class="badge bg-light text-dark" data-response-status="<?= $status ?>">
                         <?= $status ?>
                     </span>
                 </td>
                 <td>
-                    <span class="badge badge-light">
+                    <span class="badge bg-light text-dark">
                         <?= isset($activity->request) ? $activity->request->method ?? '-' : '-' ?>
                     </span>
                 </td>
-                <td class="text-monospace<?= strlen($requestUri) > 20 ? ' text-small' : '' ?>"><?= $requestUri ?></td>
+                <td class="font-monospace<?= strlen($requestUri) > 20 ? ' text-small' : '' ?>"><?= $requestUri ?></td>
                 <td>
                     <a class="text-dark" href="<?= $uriBase ?>?panel=events">
                         <?= !empty($activity->events) ? count($activity->events) : 0 ?>

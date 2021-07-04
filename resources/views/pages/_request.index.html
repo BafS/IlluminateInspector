@@ -3,7 +3,7 @@
 
 <div class="page-content">
     <table id="table-requests" class="table table-hover">
-        <thead class="thead-dark">
+        <thead class="table-dark">
             <tr>
                 <th>Status</th>
                 <th>Verb</th>
@@ -16,14 +16,14 @@
         <?php foreach($requests as $timestamp => ['request' => $request, 'response' => $response]): ?>
             <tr>
                 <td><?php $status = $response->status ?? '-' ?>
-                    <span class="badge badge-light" data-response-status="<?= $status ?>">
+                    <span class="badge rounded-pill text-light" data-response-status="<?= $status ?>">
                         <?= $status ?>
                     </span>
                 </td>
                 <td>
-                    <span class="text-monospace badge badge-light"><?= $request->method ?></span>
+                    <span class="font-monospace badge text-light"><?= $request->method ?></span>
                 </td>
-                <td class="text-monospace"><?= $request->uri ?></td>
+                <td class="font-monospace"><?= $request->uri ?></td>
                 <td class="text-muted"><?= $this->date($timestamp) ?></td>
                 <td>
                     <a class="btn-sm btn-outline-primary" href="<?= $this->uri ?>/requests/<?= $timestamp ?>">Request</a>

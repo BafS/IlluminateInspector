@@ -2,17 +2,17 @@
 <p class="lead text-muted">Timeline from "<?= $request->method ?> <?= $request->uri ?>" — <?= ($this->date)($token) ?></p>
 
 <div class="page-content">
-    <div class="row col-12">
+    <div class="row">
         <span class="card p-2" style="max-width: 140px;">
             <?= round($timeline->timeMax - $timeline->timeMin, 2) ?> ms<br>
             <small class="text-muted text-small">Total execution time</small>
         </span>
     </div>
 
-    <span class="float-right mb-2">
+    <span class="float-end mb-2">
         <span>
-            <small class="text-muted text-small">Threshold :</small>
-            <input type="number" size="3" name="threshold" id="threshold" value="0" min="0"> <small>ms</small>
+            <label for="threshold" class="text-muted text-small">Threshold:</label>
+            <input type="number" size="3" name="threshold" id="threshold" value="0" min="0"> <span class="text-small">ms</span>
         </span>
     </span>
 

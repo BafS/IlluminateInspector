@@ -6,8 +6,8 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Inspector</title>
-    <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.min.css">
 <style>
 <?= str_replace(["\n", "  ", ' {'], ['', '', '{'], file_get_contents(__DIR__ . '/../styles.css')) ?>
 </style>
@@ -21,7 +21,7 @@
                         <a class="text-dark" href="<?= $this->uri ?>">Inspector</a>
                     </h1>
 
-                    <a class="badge badge-light" href="<?= $this->uri ?>/<?= $this->lastToken() ?>">
+                    <a class="badge bg-light link-dark rounded" href="<?= $this->uri ?>/<?= $this->lastToken() ?>">
                         <i data-feather="clock"></i> last activity <?= $this->delta($this->lastToken()) ?>
                     </a>
                 </div>
@@ -34,7 +34,7 @@
                 </nav>
             </div>
 
-            <main id="content-wrapper" class="col-12 col-md-10 py-md-3 px-md-5 ml-md-auto bd-content">
+            <main id="content-wrapper" class="col-12 col-md-10 py-md-3 px-md-5 ms-md-auto bd-content">
                 <div id="content" class="pt-3">
                     <div id="page" class="flex">
                         <?= $this->render('pages/' . $page, $data) ?>
@@ -46,13 +46,10 @@
 
     <script src="//cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" crossorigin="anonymous"></script>
     <script>feather.replace()</script>
-    <script
-            src="//code.jquery.com/jquery-3.4.0.slim.min.js"
-            integrity="sha256-ZaXnYkHGqIhqTbJ6MB4l9Frs/r7U4jlx7ir8PJYBqbI="
-            crossorigin="anonymous"></script>
+    <script src="//code.jquery.com/jquery-3.6.0.slim.min.js"></script>
     <script src="//stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
-    <script src="//cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.min.js"></script>
     <script>
         $(document).ready(function () {
             $('.table-data').DataTable({

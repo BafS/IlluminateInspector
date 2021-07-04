@@ -5,10 +5,10 @@
         <div class="text-muted">
             <small><?= $this->date($token) ?></small><br>
             <small><?= $this->since($token) ?></small><br>
-            <small class="text-monospace d-block"><?= $request->method ?> <?= $request->uri ?></small>
+            <small class="font-monospace d-block"><?= $request->method ?> <?= $request->uri ?></small>
         </div>
     </a>
-    <div class="ml-3">
+    <div class="ms-3">
         <a class="nav-link<?= $this->isPanel('request', ' active') ?>" href="<?= $this->uri ?>/<?= $token ?>?panel=request">
             <i data-feather="shuffle"></i> Request
         </a>
