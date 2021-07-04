@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Quark\Inspector;
+namespace Quark\Inspector\Laravel;
 
+use Quark\Inspector\Collector;
 use Quark\Inspector\Controllers\InspectorController;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Events\RouteMatched;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Http\Events\RequestHandled;
+use Quark\Inspector\Inspector;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 class InspectorServiceProvider extends ServiceProvider
@@ -46,7 +48,6 @@ class InspectorServiceProvider extends ServiceProvider
         } else {
             $events = $this->app->get(Dispatcher::class);
         }
-        $this->app->singleton(Inspector::class);
 
         $collector = $this->app->get(Collector::class);
 
