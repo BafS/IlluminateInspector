@@ -95,7 +95,7 @@ class Collector
             return $this->contentWithinLimits($content) ? json_decode($content, true) : 'Purged';
         }
         if ($response instanceof RedirectResponse) {
-            return 'Redirected to '.$response->getTargetUrl();
+            return 'Redirected to ' . $response->getTargetUrl();
         }
 
         return 'HTML Response';

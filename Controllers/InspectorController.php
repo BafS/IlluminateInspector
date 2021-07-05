@@ -31,13 +31,9 @@ class InspectorController
 
         $last = $req->query->getInt('last', 10);
 
-        $forPage = static function ($data, int $page, int $perPage) {
-            $offset = ($page - 1) * $perPage;
+        $forPage = static fn ($data, int $perPage) => array_slice($data, 0, $perPage);
 
-            return array_slice($data, $offset, $perPage, true);
-        };
-
-        $last > 0 && $names = $forPage($names, 0, $last);
+        $last > 0 && $names = $forPage($names, $last);
 
         $activities = [];
         foreach ($names as $file) {
