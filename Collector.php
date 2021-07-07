@@ -156,7 +156,7 @@ class Collector
 
     public function getData(): array
     {
-        return $this->currentData + ['timeline' => $this->getStopwatchEvents()];
+        return $this->currentData;
     }
 
     /**
@@ -171,13 +171,18 @@ class Collector
         return (new \DateTimeImmutable())->getTimestamp();
     }
 
-    public function getStopwatchEvents(): array
+    public function saveStopwatchEvents(?Stopwatch $stopwatch = null): void
+    {
+        $this->currentData['timeline'] = $this->getStopwatchEvents($stopwatch ?? $this->stopwatch);
+    }
+
+    public function getStopwatchEvents(Stopwatch $stopwatch): array
     {
         $inspectorData = [];
         $min = PHP_INT_MAX;
         $max = 0;
 
-        foreach ($this->stopwatch->getSections() as $section) {
+        foreach ($stopwatch->getSections() as $section) {
             foreach ($section->getEvents() as $eventName => $event) {
                 $origin = $event->getOrigin();
 

@@ -84,6 +84,8 @@ class InspectorServiceProvider extends ServiceProvider
                 return;
             }
 
+            $collector->saveStopwatchEvents($this->app->get(Stopwatch::class));
+
             $inspector->saveData($collector);
         });
     }
