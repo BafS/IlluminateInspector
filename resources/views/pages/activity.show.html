@@ -1,9 +1,9 @@
 <h1>Activity</h1>
 <p class="lead text-muted pb-1">
-    <span class="text-primary font-monospace"><?= $request->uri ?></span>  (<?= $this->date($token) ?> – <?= $this->since($token) ?>)
+    <span class="text-primary font-monospace"><?= $request->uri ?></span>  (<?= $this->date($timestamp) ?> – <?= $this->since($timestamp) ?>)
 </p>
 <p>
-    <span class="font-monospace"><?= $request->controllerAction ?></span>
+    <span class="font-monospace"><?= $request->controllerAction ?? '??? TODO SF _controller' ?></span>
 </p>
 
 <div class="page-content">

@@ -3,8 +3,8 @@
         <i data-feather="zap"></i> Activity
         <br>
         <div class="text-muted">
-            <small><?= $this->date($token) ?></small><br>
-            <small><?= $this->since($token) ?></small><br>
+            <small><?= $this->date($timestamp) ?></small><br>
+            <small><?= $this->since($timestamp) ?></small><br>
             <small class="font-monospace d-block"><?= $request->method ?> <?= $request->uri ?></small>
         </div>
     </a>

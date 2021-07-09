@@ -78,6 +78,7 @@ class InspectorController
             'response' => $info->response ?? null,
             'events' => $info->events ?? [],
             'timeline' => $info->timeline ?? null,
+            'timestamp' => $info->timestamp,
             'token' => $token,
         ] + $extra);
     }
@@ -194,9 +195,7 @@ class InspectorController
                 }
                 return $this->since($timestamp);
             },
-            'lastToken' => function () {
-                return $this->inspector->getFileNames()[0] ?? null;
-            },
+            'lastToken' => fn () => $this->inspector->getLatestToken(),
             'dump' => function ($variable, bool $light = false): void {
                 $var = (new VarCloner())->cloneVar($variable);
                 $dumper = new HtmlDumper(null, null, AbstractDumper::DUMP_LIGHT_ARRAY);

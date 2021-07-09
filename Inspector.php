@@ -69,20 +69,35 @@ class Inspector
         return $this->files;
     }
 
+    /**
+     * @return string[]
+     */
     public function getFileNames(): array
     {
         return array_map(static fn ($f) => basename($f), $this->getFiles());
     }
 
-    public function readInfo($timestamp)
+    public function readInfo($timestamp): object
     {
+        if ($timestamp === 'latest') {
+            $timestamp = $this->getLatestToken();
+        }
+
         $file = $this->basePath(self::CACHE_DIR) . basename($timestamp);
         if (!is_file($file)) {
             throw new FileNotFoundException($file);
         }
         $data = file_get_contents($file);
 
-        return json_decode($data);
+        $dataObj = json_decode($data, false, 256, JSON_THROW_ON_ERROR);
+        $dataObj->timestamp = $timestamp;
+
+        return $dataObj;
+    }
+
+    public function getLatestToken(): ?string
+    {
+        return $this->getFileNames()[0] ?? null;
     }
 
     private function basePath($path = ''): string
