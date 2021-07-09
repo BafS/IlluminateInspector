@@ -49,6 +49,7 @@ class Collector
             'query' => $request->query->all(),
             'request' => $request->request->all(),
             'attributes' => $request->attributes->all(),
+            'controllerAction' => $request->attributes->get('_controller'),
 //            'files' => $request->files->all(),
         ];
 
